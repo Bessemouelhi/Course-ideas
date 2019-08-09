@@ -1,4 +1,8 @@
 package com.bessem.model;
 
-public class CourseIdeaDao {
+import java.util.List;
+
+public interface CourseIdeaDao {
+    void add(CourseIdea idea);
+    List<CourseIdea> getAll();
 }
