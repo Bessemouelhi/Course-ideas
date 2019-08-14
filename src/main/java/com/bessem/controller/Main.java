@@ -3,6 +3,7 @@ package com.bessem.controller;
 import com.bessem.model.CourseIdea;
 import com.bessem.model.CourseIdeaDao;
 import com.bessem.model.CourseIdeaImpl;
+import com.bessem.model.CourseIdeaNotFoundException;
 import org.apache.log4j.BasicConfigurator;
 import spark.ModelAndView;
 import spark.template.handlebars.HandlebarsTemplateEngine;
@@ -64,6 +65,33 @@ public class Main {
 
             res.redirect("/ideas");
             return null;
+        });
+
+        get("/ideas/:slug", (req, res) -> {
+            CourseIdea idea = ideaDao.findBySlug(req.params("slug"));
+            Map<String, Object> model = new HashMap<>();
+            model.put("idea", idea);
+
+            return new ModelAndView(model, "idea.hbs");
+        }, new HandlebarsTemplateEngine());
+
+        post("/ideas/:slug/vote", (req, res) -> {
+            CourseIdea idea = ideaDao.findBySlug(req.params("slug"));
+            //System.out.println(idea.getAuthor());
+            idea.vote(req.attribute("username"));
+            res.redirect("/ideas");
+            return null;
+        });
+
+        exception(CourseIdeaNotFoundException.class, (exc, req, res) -> {
+            res.status(404);
+            Map<String, Object> model = new HashMap<>();
+            model.put("exc", exc.getMessage());
+            HandlebarsTemplateEngine engine = new HandlebarsTemplateEngine();
+            String html = engine.render(
+                    new ModelAndView(model, "not-found.hbs")
+            );
+            res.body(html);
         });
     }
 }

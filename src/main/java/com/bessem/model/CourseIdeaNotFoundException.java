@@ -1,4 +1,5 @@
 package com.bessem.model;
 
-public class CourseIdeaNotFoundException {
+public class CourseIdeaNotFoundException extends RuntimeException {
+
 }

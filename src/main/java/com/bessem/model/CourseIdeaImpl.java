@@ -20,4 +20,11 @@ public class CourseIdeaImpl implements CourseIdeaDao {
     public List<CourseIdea> getAll() {
         return new ArrayList<>(ideaList);
     }
+
+    @Override
+    public CourseIdea findBySlug(String slug) {
+        return ideaList.stream().filter(idea -> idea.getSlug().equals(slug))
+                .findFirst()
+                .orElseThrow(CourseIdeaNotFoundException::new);
+    }
 }
